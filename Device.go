@@ -98,6 +98,7 @@ type DeviceParams struct {
 	Password           string
 	HttpClient         *http.Client
 	AuthMode           string
+	EndpointPath       string
 }
 
 // GetServices return available endpoints
@@ -171,7 +172,10 @@ func NewDevice(params DeviceParams) (*Device, error) {
 	dev := new(Device)
 	dev.params = params
 	dev.endpoints = make(map[string]string)
-	dev.addEndpoint("Device", "http://"+dev.params.Xaddr+"/onvif/device_service")
+	if params.EndpointPath == "" {
+		params.EndpointPath = "/onvif/device_service"
+	}
+	dev.addEndpoint("Device", "http://"+dev.params.Xaddr+params.EndpointPath)
 
 	if dev.params.HttpClient == nil {
 		dev.params.HttpClient = new(http.Client)
